@@ -1,0 +1,43 @@
+/* nRF52840 DK, PCA10056. The board DTS exposes LED1 as DT_ALIAS(led0)
+ * on P0.13 (active-low). P0.03 is Arduino A0 and is the timing marker.
+ */
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+    zephyr,user {
+        marker-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+    };
+};
+
+/* The workload only needs GPIO and the Zephyr system clock. Disable unused
+ * board peripherals so their drivers/pins do not pollute the current baseline. */
+&adc {
+    status = "disabled";
+};
+&uart0 {
+    status = "disabled";
+};
+&uart1 {
+    status = "disabled";
+};
+&i2c0 {
+    status = "disabled";
+};
+&spi1 {
+    status = "disabled";
+};
+&spi3 {
+    status = "disabled";
+};
+&pwm0 {
+    status = "disabled";
+};
+&qspi {
+    status = "disabled";
+};
+&ieee802154 {
+    status = "disabled";
+};
+&usbd {
+    status = "disabled";
+};

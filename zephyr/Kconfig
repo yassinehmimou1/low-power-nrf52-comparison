@@ -1,0 +1,31 @@
+mainmenu "Low-Power nRF52 Comparison"
+
+config SCENARIO_LED
+    bool "Use the on-board LED as a 50 ms activity indicator"
+    default y
+    help
+      The on-board LED adds a noticeable load to current measurements.
+      Disable it for an MCU-focused low-power baseline. Keep the same
+      setting in both the bare-metal and Zephyr builds.
+
+config SCENARIO_PERIOD_MS
+    int "Periodic wake-up interval in milliseconds"
+    range 100 600000
+    default 5000
+    help
+      Period between application wake-up events.
+
+config SCENARIO_PULSE_MS
+    int "LED pulse duration in milliseconds"
+    range 1 999
+    default 50
+    help
+      LED on-time. Must be shorter than the periodic interval.
+
+config SCENARIO_WORKLOAD_ITERATIONS
+    int "Deterministic workload iterations"
+    range 1 1000000
+    default 4096
+    help
+      Number of iterations executed on each wake-up, shared with the
+      bare-metal build through common/scenario.c.

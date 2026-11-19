@@ -1,0 +1,13 @@
+timestamp_s,implementation,current_mA,voltage_V,phase,data_origin,run_id
+0.0,Bare-Metal,0.030,3.000,idle,SIMULATED,synthetic-demo-01
+1.0,Bare-Metal,0.030,3.000,idle,SIMULATED,synthetic-demo-01
+2.0,Bare-Metal,0.030,3.000,idle,SIMULATED,synthetic-demo-01
+3.0,Bare-Metal,0.030,3.000,idle,SIMULATED,synthetic-demo-01
+4.0,Bare-Metal,0.030,3.000,idle,SIMULATED,synthetic-demo-01
+5.0,Bare-Metal,0.250,3.000,wakeup,SIMULATED,synthetic-demo-01
+0.0,Zephyr,0.045,3.000,idle,SIMULATED,synthetic-demo-01
+1.0,Zephyr,0.045,3.000,idle,SIMULATED,synthetic-demo-01
+2.0,Zephyr,0.045,3.000,idle,SIMULATED,synthetic-demo-01
+3.0,Zephyr,0.045,3.000,idle,SIMULATED,synthetic-demo-01
+4.0,Zephyr,0.045,3.000,idle,SIMULATED,synthetic-demo-01
+5.0,Zephyr,0.300,3.000,wakeup,SIMULATED,synthetic-demo-01
