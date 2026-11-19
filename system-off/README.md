@@ -1,62 +1,45 @@
-# System OFF — three firmware configurations
+# System OFF experiment — nRF52 DK PCA10040 (nRF52832)
 
-**Target hardware:** Nordic nRF52840 DK / PCA10056. **Status:** source code prepared; firmware builds, flashes and current readings **not yet verified on physical hardware**.
+**Hardware:** Nordic nRF52 DK PCA10040, nRF52832 XXAA (512 KiB Flash, 64 KiB RAM).  
+**Status:** source adapted to PCA10040; compilation/flashing of these reconstructed sources and reproduction of historical currents are **not verified** here.
 
-This experiment complements, rather than replaces, the original `bare-metal/` and `zephyr/` periodic **System ON Idle** examples.
+## Configurations
 
-## What the code actually does
+| Variant | Firmware | RAM retention configuration | Wake source |
+|---|---|---|---|
+| Bare-metal standard | `bare-metal/src/main.c`, `RETAIN_RAM_SECTION0=1` | RAM block 0 section 0 retention enabled | BUTTON1 P0.13, GPIO SENSE Low |
+| Bare-metal optimized | same, `RETAIN_RAM_SECTION0=0` | RAM block 0 section 0 retention disabled | BUTTON1 P0.13, GPIO SENSE Low |
+| Zephyr RTOS | `zephyr/src/main.c` | RAM block 0 section 0 retention disabled | BUTTON1 P0.13, GPIO SENSE Low |
 
-| Configuration | Source | System OFF entry | RAM0 section S0 retention | Wake source |
-|---|---|---|---|---|
-| Bare-metal standard (retention baseline) | `bare-metal/src/main.c` | `NRF_POWER->SYSTEMOFF` | Explicitly **on** | BUTTON1 P0.11, low-level SENSE |
-| Bare-metal optimized (no S0 retention) | Same source, `RETAIN_RAM_SECTION0=0` | `NRF_POWER->SYSTEMOFF` | Explicitly **off** | BUTTON1 P0.11, low-level SENSE |
-| Zephyr RTOS System OFF | `zephyr/src/main.c` | Zephyr `sys_poweroff()` | Explicitly **off** | BUTTON1 P0.11, low-level SENSE |
+**Important:** These three source configurations are a reproducible *reconstruction*, not proof of the exact binaries/configurations used for the author's historical measurements. Enabling/disabling one retention section is not guaranteed to produce the reported current values. Other RAM retention sections and hardware defaults can influence current. Document actual retention registers and board setup before making causal claims.
 
-**Important:** `standard` here names the **retention-enabled reference configuration**, not a claim about the Nordic reset defaults. Only the retention bit for RAM0/S0 is deliberately changed; this is not a comprehensive board-level optimization. Other retention fields may differ depending on startup/SDK, so inspect the effective register values when benchmarking.
+System OFF disables the CPU/kernel. BUTTON1 causes a wake-by-reset; no periodic RTC wake is possible in System OFF. Compare *steady-state* current only, excluding boot, debugger and button-press transients. System OFF values do **not** measure RTOS scheduler overhead.
 
-System OFF is *not* a periodic sleep state: the RTC is not running as a wake source. Pressing BUTTON1 resets the SoC and runs `main()` again. The boot/re-entry interval must be excluded from a steady-state System OFF current average.
+## Build
 
-The code does not aim to reproduce the 4.7/3.6/4.3 µA numbers. Those values are **user-supplied, community-reported references**, not outputs of these programs.
-
-## Build (requires external toolchains)
-
-Bare-metal — nRF5 SDK 17.1.0 + GNU Arm Embedded:
+Install nRF5 SDK 17.1.0 and ARM GNU toolchain separately. From `system-off/bare-metal`:
 
 ```bash
-cd system-off/bare-metal
 make SDK_ROOT=/absolute/path/to/nRF5_SDK_17.1.0 RETAIN_RAM_SECTION0=1
 make SDK_ROOT=/absolute/path/to/nRF5_SDK_17.1.0 RETAIN_RAM_SECTION0=0
 ```
 
-Outputs: `build/retention_1/system_off_bare_metal.hex` and `build/retention_0/system_off_bare_metal.hex`.
+Expected output files: `build/retention_1/system_off_bare_metal.hex` and `build/retention_0/system_off_bare_metal.hex`.
 
-Zephyr v3.7.0 (in an initialized workspace):
-
-```bash
-west build -b nrf52840dk/nrf52840 /absolute/path/to/repo/system-off/zephyr -d build/system-off-zephyr
-```
-
-On Windows PowerShell, replace Unix-style paths with appropriate Windows paths and run from the Zephyr workspace or a configured shell.
-
-## Flash and observe
+For Zephyr v3.7.0, from a configured workspace:
 
 ```bash
-nrfjprog --family NRF52 --program system-off/bare-metal/build/retention_1/system_off_bare_metal.hex --verify --reset
-# OR for Zephyr:
-west flash -d build/system-off-zephyr
+west build -b nrf52dk/nrf52832 /absolute/path/to/repo/system-off/zephyr -d build/system-off-zephyr
 ```
 
-1. Program one firmware. Disconnect the debug/programming path as required by the official DK current measurement guide.
-2. Wire the power profiler **in series** with the SoC current measurement path; follow the specific board revision manual.
-3. Wait until startup completes and the chip enters System OFF. Record current after settling, not during boot.
-4. Press BUTTON1: the SoC resets; release it to let the firmware re-enter System OFF.
-5. Capture at least five steady-state runs per firmware, at a fixed voltage and temperature, and preserve the raw trace.
-6. Check the effect of the DK interface MCU, debugger, regulators, pull-ups and current measurement wiring. The DK board current is not necessarily the bare SoC current.
+After flashing and disconnecting debug, measure the **SoC supply current** through the PCA10040 measurement path, following the user guide for the exact board revision. Never put an ammeter across the power supply.
 
-**Safety:** never place a current-mode meter directly across a voltage source.
+## Historical measurements reported by the author
 
-## Interpretation
+| Variant | Reported System OFF current |
+|---|---:|
+| Bare-metal standard | 4.7 µA |
+| Bare-metal optimized | 3.6 µA |
+| Zephyr RTOS | 4.3 µA |
 
-System OFF removes almost all runtime activity. A difference between firmware variants in this state is mainly due to *persistent hardware state* (retention, GPIO, wake circuitry, external board loads), not scheduler overhead while the CPU is off. For RTOS scheduling overhead, use the existing **System ON Idle** experiment.
-
-See `../docs/system_off_methodology.md` and `../analysis/reference_values.csv`.
+The author reports having measured these values on a PCA10040. **Raw traces, instrument model, voltage, board revision and original firmware binaries are not yet provided in this repository.** Therefore they have not been independently reproduced from the reconstructed sources. See `../docs/system_off_methodology.md`.

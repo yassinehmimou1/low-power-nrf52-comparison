@@ -4,8 +4,8 @@
 
 For every test campaign, record:
 
-- DK order code and PCB revision (PCA10056 and revision printed on board).
-- nRF52840 silicon revision if available.
+- DK order code and PCB revision (PCA10040 and revision printed on board).
+- nRF52832 silicon revision if available.
 - Firmware commit hash and build configuration.
 - Bare-metal SDK/toolchain or Zephyr revision/toolchain.
 - Supply source, voltage, current limit and measurement instrument.

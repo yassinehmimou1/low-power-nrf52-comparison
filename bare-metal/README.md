@@ -1,6 +1,6 @@
 # Bare-metal implementation
 
-This application targets the **nRF52840 DK (PCA10056)** and uses direct CMSIS-accessible peripheral registers. It deliberately does not use an RTOS or Nordic SoftDevice.
+This application targets the **nRF52 DK PCA10040** and uses direct CMSIS-accessible peripheral registers. It deliberately does not use an RTOS or Nordic SoftDevice.
 
 ## Behavior
 
@@ -14,7 +14,7 @@ This application targets the **nRF52840 DK (PCA10056)** and uses direct CMSIS-ac
 
 ## Dependencies
 
-Install nRF5 SDK 17.1.0 separately. The SDK is not included because it is a third-party distribution. The Makefile uses the CMSIS/device headers and startup/system files from that SDK. No nrfx driver is linked: RTC and GPIO are configured directly through the nRF52840 register definitions.
+Install nRF5 SDK 17.1.0 separately. The SDK is not included because it is a third-party distribution. The Makefile uses the CMSIS/device headers and startup/system files from that SDK. No nrfx driver is linked: RTC and GPIO are configured directly through the nRF52832 register definitions.
 
 ## Build
 
@@ -35,7 +35,7 @@ nrfjprog --family NRF52 --reset
 
 ## Important limitations
 
-- This is a register-level example for the nRF52840 only, not a portable nRF52 driver layer.
+- This is a register-level example for the nRF52832 only, not a portable nRF52 driver layer.
 - RTC2 is reserved by this application. Do not enable another component that uses RTC2.
 - The board's external 32.768 kHz crystal is selected. A custom board without that crystal needs a different LFCLK source and must be revalidated.
 - No UART output is generated to avoid measurement contamination.

@@ -1,6 +1,6 @@
-/* nRF52840 DK (PCA10056) System OFF experiment.
+/* nRF52 DK (PCA10040, nRF52832) System OFF experiment.
  * Build with RETAIN_RAM_SECTION0=1 (baseline) or 0 (optimized).
- * Button 1 on P0.11 wakes the device; wake-up causes a RESET.
+ * Button 1 on P0.13 wakes the device; wake-up causes a RESET.
  * IMPORTANT: this code does not generate or imply any specific current.
  */
 #include <stdint.h>
@@ -14,12 +14,12 @@
 #error "RETAIN_RAM_SECTION0 must be 0 or 1"
 #endif
 
-#define BUTTON1_PIN 11U
+#define BUTTON1_PIN 13U
 #define BUTTON1_MASK (1UL << BUTTON1_PIN)
 
 static void configure_button_wakeup(void)
 {
-    /* On the PCA10056, BUTTON1 shorts P0.11 to GND when pressed.
+    /* On the PCA10040, BUTTON1 shorts P0.13 to GND when pressed.
      * Internal pull-up keeps the line high when released.
      * SENSE=Low is a valid wake source from System OFF.
      */

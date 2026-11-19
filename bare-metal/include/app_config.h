@@ -11,7 +11,7 @@
 #define RTC_PERIOD_TICKS         RTC_TICKS_FROM_MS(SCENARIO_PERIOD_MS)
 #define RTC_PULSE_TICKS          RTC_TICKS_FROM_MS(SCENARIO_PULSE_MS)
 
-#define LED1_PIN                 13U  /* P0.13, active-low on nRF52840 DK */
+#define LED1_PIN                 17U  /* P0.17, active-low on nRF52 DK PCA10040 */
 #define MARKER_PIN               3U   /* P0.03, Arduino A0 */
 
 #if (RTC_PERIOD_TICKS >= 0x1000000UL)

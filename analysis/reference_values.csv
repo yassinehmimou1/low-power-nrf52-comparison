@@ -1,4 +1,4 @@
 variant,current_uA,origin,verification
-Bare-metal standard,4.7,community-reported in user-provided LinkedIn graphic,unverified
-Bare-metal optimized,3.6,community-reported in user-provided LinkedIn graphic,unverified
-Zephyr RTOS System OFF,4.3,community-reported in user-provided LinkedIn graphic,unverified
+Bare-metal standard,4.7,author-reported measurement on PCA10040,raw traces not supplied in repository
+Bare-metal optimized,3.6,author-reported measurement on PCA10040,raw traces not supplied in repository
+Zephyr RTOS System OFF,4.3,author-reported measurement on PCA10040,raw traces not supplied in repository

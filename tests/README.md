@@ -8,4 +8,4 @@ Run:
 python -m unittest discover -s tests -v
 ```
 
-Hardware tests must be executed manually on the nRF52840 DK and recorded using `test_plan.md`.
+Hardware tests must be executed manually on the nRF52 DK PCA10040 and recorded using `test_plan.md`.

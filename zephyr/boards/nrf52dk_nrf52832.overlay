@@ -1,0 +1,13 @@
+/* PCA10040 nRF52 DK (nRF52832). LED1 = P0.17 (led0 alias),
+ * BUTTON1 = P0.13 (sw0 alias), marker = P0.03 (Arduino A0).
+ * Avoid referencing peripherals not present in this SoC's DTS.
+ */
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+    zephyr,user {
+        marker-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+    };
+};
+
+&uart0 { status = "disabled"; };

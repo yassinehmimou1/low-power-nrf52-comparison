@@ -15,17 +15,17 @@ endif
 
 MDK_DIR := $(SDK_ROOT)/modules/nrfx/mdk
 CMSIS_DIR := $(SDK_ROOT)/components/toolchain/cmsis/include
-STARTUP := $(MDK_DIR)/gcc_startup_nrf52840.S
-SYSTEM := $(MDK_DIR)/system_nrf52840.c
+STARTUP := $(MDK_DIR)/gcc_startup_nrf52.S
+SYSTEM := $(MDK_DIR)/system_nrf52.c
 
 BUILD_DIR := build
 TARGET := $(BUILD_DIR)/low_power_bare_metal
-LINKER_SCRIPT := linker/nrf52840_xxaa.ld
+LINKER_SCRIPT := linker/nrf52_xxaa.ld
 
 CFLAGS := -std=c11 -Os -g3 -Wall -Wextra \
           -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard \
           -ffunction-sections -fdata-sections -fno-common \
-          -DNRF52840_XXAA -D__HEAP_SIZE=0 -D__STACK_SIZE=2048 \
+          -DNRF52832_XXAA -D__HEAP_SIZE=0 -D__STACK_SIZE=2048 \
           -DSCENARIO_LED_ENABLE=$(SCENARIO_LED_ENABLE) \
           -DSCENARIO_PERIOD_MS=$(SCENARIO_PERIOD_MS) \
           -DSCENARIO_PULSE_MS=$(SCENARIO_PULSE_MS) \
@@ -46,7 +46,7 @@ all: check-sdk $(TARGET).hex
 check-sdk:
 	@test -f "$(STARTUP)" || (echo "Missing startup file: $(STARTUP)"; exit 1)
 	@test -f "$(SYSTEM)" || (echo "Missing system file: $(SYSTEM)"; exit 1)
-	@test -f "$(MDK_DIR)/nrf52840.h" || (echo "Missing nrf52840.h in $(MDK_DIR)"; exit 1)
+	@test -f "$(MDK_DIR)/nrf52832.h" || (echo "Missing nrf52832.h in $(MDK_DIR)"; exit 1)
 	@command -v $(CC) >/dev/null || (echo "Missing compiler $(CC)"; exit 1)
 
 $(BUILD_DIR):
@@ -58,13 +58,13 @@ $(BUILD_DIR)/main.o: src/main.c | $(BUILD_DIR)
 $(BUILD_DIR)/scenario.o: ../common/src/scenario.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/system_nrf52840.o: $(SYSTEM) | $(BUILD_DIR)
+$(BUILD_DIR)/system_nrf52.o: $(SYSTEM) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/startup.o: $(STARTUP) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -x assembler-with-cpp -c $< -o $@
 
-$(TARGET).elf: $(BUILD_DIR)/main.o $(BUILD_DIR)/scenario.o $(BUILD_DIR)/system_nrf52840.o $(BUILD_DIR)/startup.o
+$(TARGET).elf: $(BUILD_DIR)/main.o $(BUILD_DIR)/scenario.o $(BUILD_DIR)/system_nrf52.o $(BUILD_DIR)/startup.o
 	$(CC) $^ $(LDFLAGS) -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group -o $@
 	$(SIZE) $@
 

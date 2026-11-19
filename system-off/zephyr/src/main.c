@@ -1,5 +1,5 @@
-/* nRF52840 DK Zephyr v3.7.0 System OFF experiment.
- * Wake source: button1 (sw0, P0.11, active-low); waking resets the SoC.
+/* nRF52 DK (PCA10040) Zephyr v3.7.0 System OFF experiment.
+ * Wake source: button1 (sw0, P0.13, active-low); waking resets the SoC.
  * Unlike System ON Idle, there is no RTC wake or scheduled kernel work.
  */
 #include <errno.h>
@@ -12,7 +12,7 @@
 #include <soc.h>
 
 #if !DT_NODE_EXISTS(DT_ALIAS(sw0))
-#error "The nRF52840 DK must expose the sw0 DeviceTree alias"
+#error "The nRF52 DK (PCA10040) must expose the sw0 DeviceTree alias"
 #endif
 
 static const struct gpio_dt_spec button = GPIO_DT_SPEC_GET(DT_ALIAS(sw0), gpios);
@@ -40,12 +40,12 @@ int main(void)
         }
     } while (ret != 0);
 
-    /* The DK sw0 alias is on P0.11. Set hardware SENSE to Low so it
+    /* The DK sw0 alias is on P0.13. Set hardware SENSE to Low so it
      * remains a wake source after the Zephyr kernel powers down.
      * gpio_pin_configure_dt() above configures input and pull-up from DTS.
      */
-    BUILD_ASSERT(DT_GPIO_PIN(DT_ALIAS(sw0), gpios) == 11,
-                 "Expected button1 on P0.11");
+    BUILD_ASSERT(DT_GPIO_PIN(DT_ALIAS(sw0), gpios) == 13,
+                 "Expected button1 on P0.13");
     NRF_P0->LATCH = BIT(button.pin);
     NRF_P0->PIN_CNF[button.pin] =
         (NRF_P0->PIN_CNF[button.pin] & ~GPIO_PIN_CNF_SENSE_Msk) |

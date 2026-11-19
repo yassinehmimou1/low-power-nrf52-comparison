@@ -12,7 +12,7 @@ The register-level firmware is expected to have less software framework overhead
 
 ## Controlled variables
 
-- Same nRF52840 DK and board revision.
+- Same nRF52 DK PCA10040 and board revision.
 - Same supply voltage and source.
 - Same measurement instrument, range, sampling rate and wiring.
 - Same period, pulse duration and workload iteration count.
@@ -23,7 +23,7 @@ The register-level firmware is expected to have less software framework overhead
 
 1. Record board revision and instrument calibration/status.
 2. Build both firmwares with identical scenario constants and LED disabled.
-3. Flash the first firmware, disconnect debug USB and prepare P22/SB40 according to the DK user guide.
+3. Flash the first firmware, disconnect debug USB and prepare the PCA10040 SoC current-measurement circuit according to the board revision user guide.
 4. Apply a stable external supply and allow the setup to settle.
 5. Capture at least 60 seconds with a sampling rate capable of resolving active events. Use the P0.03 marker to align the current trace with wake events.
 6. Save the raw instrument export. Convert to the CSV schema without modifying the raw file.

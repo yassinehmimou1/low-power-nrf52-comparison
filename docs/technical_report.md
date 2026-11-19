@@ -1,62 +1,31 @@
-# Technical Report — Low-Power Firmware Comparison on nRF52840
+# Technical report — PCA10040 / nRF52832
 
-**Status:** implementation package prepared; hardware validation and physical measurements pending.
+## Scope
 
-## 1. Abstract
+Two separate firmware experiments on Nordic nRF52 DK **PCA10040**, targeting the **nRF52832 XXAA** (512 KiB Flash, 64 KiB RAM):
 
-This project defines a controlled comparison between a register-level bare-metal firmware and a Zephyr RTOS application on the Nordic nRF52840 DK. Both execute a periodic wake-up scenario, toggle a timing marker, run a deterministic CPU workload and return to System ON idle. The purpose is to compare energy use and engineering trade-offs while preserving experimental traceability.
+1. **System OFF**: static deep-sleep comparison across three firmware configurations, BUTTON1 P0.13 wake-by-reset. The author reports 4.7 µA (bare-metal standard), 3.6 µA (bare-metal optimized) and 4.3 µA (Zephyr). The raw acquisition traces and original firmware build artifacts have not yet been provided; the current firmware is a reconstruction.
+2. **System ON Idle**: periodic 5 s RTC2 / Zephyr timer wake, common CPU workload, P0.03 marker, optional P0.17 LED. No measured currents are supplied for this experiment.
 
-## 2. Hardware and software configuration
+## Historical System OFF results (author-reported)
 
-- Board: Nordic nRF52840 DK, PCA10056 (record PCB revision during testing).
-- SoC: nRF52840, ARM Cortex-M4F, 1 MiB Flash, 256 KiB RAM.
-- Bare-metal dependency: nRF5 SDK 17.1.0 (external), ARM GNU toolchain (record exact version).
-- RTOS: Zephyr v3.7.0, board target `nrf52840dk/nrf52840`.
-- Measurement instrument: **TBD — record model, firmware/software version and calibration status**.
+| Variant | Reported current | Trace status |
+|---|---:|---|
+| Bare-metal standard | 4.7 µA | Original raw trace not included |
+| Bare-metal optimized | 3.6 µA | Original raw trace not included |
+| Zephyr RTOS | 4.3 µA | Original raw trace not included |
 
-## 3. Workload and architecture
+Comparisons: Zephyr vs standard **−8.5%**, Zephyr vs optimized **+19.4%**. These are arithmetic comparisons of reported steady-state currents, not evidence of RTOS scheduler overhead or energy per cycle.
 
-Nominal period: 5,000 ms. Optional LED pulse: 50 ms. Shared CPU workload: 4,096 integer iterations. Bare-metal uses RTC2 compare interrupts and `WFE`; Zephyr uses `k_timer`, a semaphore and the kernel idle thread. P0.03 is the external timing marker.
+## Firmware and validation
 
-## 4. Build and validation status
+- Bare-metal: nRF5 SDK 17.1.0 + ARM GNU toolchain, startup `gcc_startup_nrf52.S`, SoC `NRF52832_XXAA`.
+- Zephyr: v3.7.0, board target `nrf52dk/nrf52832`.
+- GPIO: BUTTON1 P0.13, LED1 P0.17, marker P0.03.
+- Compilation, flashing and measured-current reproduction **pending on physical PCA10040**. See `../VALIDATION.md`.
 
-| Item | Status |
-|---|---|
-| Source files generated | Yes |
-| API/configuration review | Static review only; local build required |
-| Bare-metal compile | Not verified in this environment |
-| Zephyr compile | Not verified in this environment |
-| Flashing | Not performed |
-| Functional board tests | Not performed |
-| Current measurements | Not performed |
-| Python analysis unit tests | Run locally and record result before publication |
+## Experimental limitations and next steps
 
-## 5. Experimental results
+Document instrument and calibration, PCB revision, voltage, temperature, SoC current supply path, firmware binary hashes and raw traces. Repeat at least five runs per firmware. The current code toggles one RAM retention section to illustrate a reproducible configuration difference; it does **not** establish that this was the only difference in the historical experiment.
 
-No physical measurements are included. Populate the following table only after the test plan is completed.
-
-| Metric | Bare-metal | Zephyr | Notes / run IDs |
-|---|---:|---:|---|
-| Mean current | TBD | TBD | Real capture only |
-| Idle current | TBD | TBD | LED disabled |
-| Active peak current | TBD | TBD | State sample rate and instrument range |
-| Wake-to-marker latency | TBD | TBD | Distribution across events |
-| Energy per cycle | TBD | TBD | Trapezoidal integration |
-| Ideal autonomy | TBD | TBD | State battery capacity and assumptions |
-
-## 6. Discussion framework
-
-Discuss measured results only after validating the capture. Explain differences in timer backend, scheduler and synchronization overhead. Separate SoC current from DK-level current. If the measured difference is within instrument uncertainty or run-to-run spread, state that the experiment does not establish a meaningful difference.
-
-## 7. Limitations
-
-- The DK is not a production battery-powered design.
-- The LED and debug interface can dominate current.
-- The Zephyr and bare-metal timer backends differ.
-- The battery-life equation ignores derating, regulator efficiency and cell self-discharge.
-- The benchmark measures System ON idle, not System OFF.
-- Compilation and hardware execution remain to be verified on the target setup.
-
-## 8. Conclusion
-
-**Pending real build and measurement evidence.** Do not write a conclusion claiming that one architecture consumes less power until repeated physical measurements support it.
+For System ON, measure active/idle current, wake-to-marker latency and energy per cycle using a suitable profiler and the shared workload. Do not infer full battery life from System OFF current alone.

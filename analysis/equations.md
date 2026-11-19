@@ -63,11 +63,11 @@ This assumes the full rated capacity is usable and the average current remains c
 
 - Battery capacity depends on discharge rate, temperature, age, chemistry and cutoff voltage.
 - Regulator efficiency and quiescent current are not necessarily constant across load.
-- The nRF52840 DK is not a production battery-powered PCB; board-level leakage and debug circuitry must be isolated or separately accounted for.
+- The nRF52 DK PCA10040 is not a production battery-powered PCB; board-level leakage and debug circuitry must be isolated or separately accounted for.
 - Measurement bandwidth and sample rate must capture short wake-up spikes. Undersampling can miss peaks and bias integrated energy.
 - Current range changes, shunt burden voltage, calibration and instrument noise affect results.
 - The autonomy equation does not include self-discharge, radio activity, battery derating, burst load limitations or application-specific maintenance events.
-- Do not infer the nRF52840 silicon sleep-current specification from a DK-level current measurement.
+- Do not infer the nRF52832 silicon sleep-current specification from a DK-level current measurement.
 
 ## Phase-specific current
 

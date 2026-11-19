@@ -12,7 +12,7 @@ This is a design-level comparison, not a claim about measured current or latency
 | Interrupt handling | ISR written and owned by the application | Timer interrupt managed by Zephyr; callback must remain short |
 | Resource overhead | Minimal runtime and no scheduler | Kernel, scheduler, timer and synchronization state |
 | Timing control | Direct peripheral configuration; application owns race handling | Higher-level timing API; kernel tick/timer semantics and scheduling latency apply |
-| Portability | Tied to nRF52840 register map and startup support | More portable across supported Zephyr boards, subject to drivers and DTS |
+| Portability | Tied to nRF52832 register map and startup support | More portable across supported Zephyr boards, subject to drivers and DTS |
 | Maintainability | Small codebase, but peripheral details are manual | More conventions and configuration, stronger abstraction and extension path |
 | Extensibility | Additional tasks require custom event/state machinery | Threads, queues, semaphores, workqueues, drivers and PM framework available |
 | Power optimization | Explicit control over selected peripherals and wake sources | Idle behavior plus device/system PM configuration; driver state matters |
@@ -22,7 +22,7 @@ This is a design-level comparison, not a claim about measured current or latency
 
 1. **Zephyr does not inherently consume more energy in every application.** Its baseline overhead depends on enabled kernel services, drivers, clocks, console and board configuration.
 2. **Bare-metal does not automatically mean lower current.** A peripheral left enabled, a busy loop, an active HF clock or a poor GPIO configuration can dominate current.
-3. The nRF52840's System ON idle is available when the CPU waits for an event while the RTC remains active. The Zephyr idle thread can provide this behavior without application code calling `WFE` directly.
+3. The nRF52832's System ON idle is available when the CPU waits for an event while the RTC remains active. The Zephyr idle thread can provide this behavior without application code calling `WFE` directly.
 4. The Zephyr timer and the bare-metal RTC2 timer are different timer paths. This comparison intentionally includes the software abstraction and scheduling overhead of Zephyr; it does not claim a cycle-identical timer implementation.
 5. The LED current can dominate the low-current portion. Disable it for the primary MCU-focused measurement and use P0.03 as the external timing marker.
 6. A fair comparison requires matching period, workload, pulse duration, supply voltage, measurement window, firmware optimization level as closely as practical, and physical setup.
@@ -44,4 +44,4 @@ No results are entered because no physical measurement dataset has been supplied
 
 ## Additional System OFF experiment
 
-The LinkedIn-aligned experiment is separately documented at [`../system-off/README.md`](../system-off/README.md). Its three user-provided reference currents are **unverified** and are not the results of the RTC-driven System ON firmware described above.
+The LinkedIn-aligned experiment is separately documented at [`../system-off/README.md`](../system-off/README.md). Its three author-reported historical current values have no raw acquisition traces in the repository and are not the results of the RTC-driven System ON firmware described above.

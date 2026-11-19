@@ -7,7 +7,7 @@ from reference_summary import load_references, percent_difference
 
 
 class TestReferenceSummary(unittest.TestCase):
-    def test_community_values_are_loaded(self):
+    def test_author_reported_values_are_loaded(self):
         values = load_references()
         self.assertEqual(values["Bare-metal standard"], 4.7)
         self.assertEqual(values["Bare-metal optimized"], 3.6)

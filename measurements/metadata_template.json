@@ -1,0 +1,17 @@
+{
+  "data_origin": "MEASURED",
+  "board": "PCA10040",
+  "soc": "nRF52832_XXAA",
+  "pcb_revision": "FILL_ME",
+  "firmware_variant": "FILL_ME",
+  "firmware_commit": "FILL_ME",
+  "firmware_binary_sha256": "FILL_ME",
+  "measurement_instrument": "FILL_ME",
+  "instrument_firmware_version": "FILL_ME",
+  "supply_voltage_v": null,
+  "ambient_temperature_c": null,
+  "sample_rate_hz": null,
+  "measurement_path": "FILL_ME",
+  "ram_retention_registers": "FILL_ME",
+  "notes": "Original raw traces are not included in this repository"
+}

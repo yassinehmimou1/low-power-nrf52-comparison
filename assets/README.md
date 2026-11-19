@@ -1,6 +1,5 @@
-# Images supplied for the LinkedIn post
+# Visual assets
 
-- `linkedin_reference_chart.png`: user-supplied graphic showing **community-reported** 4.7 / 3.6 / 4.3 µA values. Not an instrument trace and not verified against this firmware.
-- `board_photo_pca10040_reference.png`: user-supplied photo with a visible **PCA10040** label, so it must **not** be represented as the nRF52840 DK (PCA10056) used as the firmware target.
-
-Replace the board image with a photograph of the actual PCA10056 measurement setup if/when available. Do not publish either as proof of hardware measurements.
+- `board_photo_pca10040.png`: image supplied by the project author; the visible PCB label is PCA10040. The image alone does not establish the measurement wiring or the instrumentation.
+- `linkedin_original_chart.png`: original LinkedIn graphic supplied by the author. Its subtitle mentions community-reported currents, whereas the author now confirms these are their own historical measurements. This original is preserved for traceability, but the README uses a newly generated figure with the corrected attribution.
+- `system_off_reported_results.png`: chart regenerated from `analysis/reference_values.csv` and explicitly labelled as author-reported, without raw traces in the repository.

@@ -1,47 +1,35 @@
-# Measurement protocol — System OFF on nRF52840 DK
+# System OFF measurement methodology — PCA10040
 
-## Objective and scope
+## Hardware and provenance
 
-Compare steady-state **System OFF** current under three documented software configurations on **the same nRF52840 DK (PCA10056)**. This is distinct from the 5 s RTC-driven **System ON Idle** experiment elsewhere in this repository.
+The project author reports System OFF measurements on a Nordic nRF52 DK **PCA10040** (nRF52832): 4.7 µA (bare-metal standard), 3.6 µA (bare-metal optimized), and 4.3 µA (Zephyr). These are **author-reported historical results**; no original instrument exports or original flashed binaries are supplied in this repository. The current sources are a reconstruction intended to support reproduction, not a verified match to the original test.
 
-## Preconditions
+Record before attempting to reproduce: PCB revision, nRF52832 chip variant, instrument model and calibration, source voltage, temperature, supply jumper/solder bridge configuration, firmware commit and binary SHA256, SDK/compiler versions, Zephyr version, GPIO and RAM retention registers, logging/debugger state, and capture settings.
 
-- Record the board's **actual PCB reference** (PCA10056), revision, supply path and regulator settings. The image supplied for the LinkedIn post appears to show **PCA10040** (nRF52 DK), not PCA10056. Do not use it as proof of tests on nRF52840.
-- Confirm the current-sense jumpers/solder bridges in the official manual for that revision. Do not cut or modify bridges without checking the revision.
-- Record firmware commit, SDK version, compiler version, optimization flags, supply voltage, ambient temperature, instrument, sample rate and wiring.
-- Use the same supply voltage, physical DK, instrument, and wake source for every run.
-- Remove the USB/debugger connection from the measurement path where required; do not assume USB-supplied DK current equals MCU current.
+## Experimental protocol
 
-## Capture sequence
+1. Build the three PCA10040-targeted System OFF variants. Record firmware hashes.
+2. Program the first firmware. Remove debugger/USB and any unintended external loads in accordance with the **PCA10040** revision-specific current measurement instructions.
+3. Wire the profiler in **series** with the SoC supply path, never across the supply. Confirm correct polarity, voltage and current limits.
+4. Verify BUTTON1 on **P0.13** wakes the device via reset; allow it to re-enter System OFF after release.
+5. Capture stable System OFF current for at least 60 s, excluding startup/reset/button transients.
+6. Repeat at least five times at the same voltage and temperature; preserve raw exports and per-run metadata.
+7. Repeat the same setup for the other two firmware variants; do not change wiring or profiler settings.
+8. Calculate run means, median, standard deviation and uncertainty. Compare with historical author-reported numbers, but do not assume the reconstructed retention settings exactly match the original firmware.
 
-1. Build and flash `system-off/bare-metal` with `RETAIN_RAM_SECTION0=1`.
-2. Connect the profiler according to the Nordic current-measurement guide.
-3. Let the MCU enter System OFF; verify with a power trace. Do **not** include reset/boot transient in the steady-state average.
-4. Record at least 60 s of stable System OFF current and save the raw instrument export.
-5. Repeat at least 5 times, recording mean, median, standard deviation, supply voltage and measurement uncertainty.
-6. Repeat with `RETAIN_RAM_SECTION0=0`, then with `system-off/zephyr`, without changing the measurement circuit.
-7. Press BUTTON1 to verify wake-by-reset, and document the transient separately.
-8. Report each firmware's measured current with run IDs, raw CSV traces and the full hardware/software configuration.
+## Reported results and calculations
 
-## Reported reference numbers from the LinkedIn graphic
+| Variant | Current | Provenance |
+|---|---:|---|
+| Bare-metal standard | 4.7 µA | Author-reported PCA10040 measurement; raw trace pending |
+| Bare-metal optimized | 3.6 µA | Author-reported PCA10040 measurement; raw trace pending |
+| Zephyr System OFF | 4.3 µA | Author-reported PCA10040 measurement; raw trace pending |
 
-| Label in post | Current | Origin | Status |
-|---|---:|---|---|
-| Bare-metal standard | 4.7 µA | User-provided graphic; attributed to Nordic community | **Not verified on this repository's firmware** |
-| Bare-metal optimized | 3.6 µA | User-provided graphic; attributed to Nordic community | **Not verified on this repository's firmware** |
-| Zephyr RTOS System OFF | 4.3 µA | User-provided graphic; attributed to Nordic community | **Not verified on this repository's firmware** |
+Zephyr versus standard: `(4.3/4.7 - 1)*100 = -8.51%`.  
+Zephyr versus optimized: `(4.3/3.6 - 1)*100 = +19.44%`.
 
-Difference vs standard: `(4.3/4.7 - 1)*100 = -8.51%`.
-Difference vs optimized: `(4.3/3.6 - 1)*100 = +19.44%`.
+These values characterize *steady-state System OFF*, not scheduler cost, wake latency, or full-cycle battery life. To compare scheduler and wake energy, use the separate System ON Idle experiment.
 
-The provenance of the community figures has not been independently confirmed. **Do not present them as measurements taken with this repository.** There is no established one-to-one mapping between the figures and the retention configuration implemented here.
+## Raw evidence to add when available
 
-## Scientific caveat
-
-A static System OFF current measurement cannot by itself quantify RTOS overhead, CPU wake latency, or battery autonomy. For meaningful power comparison of software execution, also measure energy per complete wake/active/sleep cycle using the existing System ON experiment.
-
-## Useful official references
-
-- [Nordic nRF52840 POWER](https://docs.nordicsemi.com/r/bundle/ps_nrf52840/page/power.html)
-- [nRF52840 DK current measurement](https://docs.nordicsemi.com/r/bundle/ug_nrf52840_dk/page/ug/dk/hw_measure_current.html)
-- [Zephyr 3.7 power-off API](https://docs.zephyrproject.org/3.7.0/)
+Place original acquisition exports in `measurements/raw/` (if suitable for publication), plus a run manifest documenting board revision, instrument, voltage, temperature, build hashes, retention registers and sampling rate. Do not synthesize traces to match the three summary numbers.
