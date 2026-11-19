@@ -40,3 +40,8 @@ This is a design-level comparison, not a claim about measured current or latency
 | Estimated autonomy (days) | TBD | TBD | TBD |
 
 No results are entered because no physical measurement dataset has been supplied.
+
+
+## Additional System OFF experiment
+
+The LinkedIn-aligned experiment is separately documented at [`../system-off/README.md`](../system-off/README.md). Its three user-provided reference currents are **unverified** and are not the results of the RTC-driven System ON firmware described above.
